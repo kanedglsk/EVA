@@ -4,8 +4,9 @@ author: "Shikun Li"
 output:
   html_document:
     number_sections: yes
-    theme: sandstone
+    theme: paper
     toc: yes
+    toc_float: true
 bibliography: references.bib
 ---
 How do we predict rare events of extreme values, such as floods (high riverflow), tsunami (high sea level) and DDoS attack (anomalous traffic), when there are very few such observations? What do 100-year flood, 50-year wave and  200-day outbreak mean? 
@@ -55,6 +56,7 @@ $$\begin{equation} G(z)=
 
 Illustrating the theorm by simulation:
 ```{r, message=FALSE}
+set.seed(123)
 library(extRemes)
 ## block size
 n <- 12
@@ -112,13 +114,24 @@ pot_points <- unlist(data_series) > threshold
 points(x = rep(1:series_length, each = n)[pot_points], y = unlist(data_series)[pot_points], col = "red")
 abline(h = threshold, col = "red")
 gp_fit <- fevd(unlist(data_series), threshold = threshold, type = "GP")
-plot(gp_fit, type = "density", main = "Empirical POT density vs estimated GP distribution")
+plot(gp_fit, type = "density", main = "Empirical POT exceedances density vs estimated GP distribution")
 plot(gp_fit, type = "rl", main = "Return level")
 ```
 
 The selection of threshold is not straightforward: threshold too low-bias because of the model asymptotics being invalid; threshold too high-variance is large due to few data points.
 
 ## Point process representation
+Suppose $F$ unknown, $X_1, X_2, X_3, ... X_n \stackrel{i.i.d.}\sim F$. Form a 2-dimensional point process $\{(i,X_i);i=1,...,n\}$  and characterize the behaviour of this process in regions of the form $\textit{A}=[t1,t2]\times [u,\infty)$.
 
+Construct a sequence of point process on $\mathbb{R}^2$ by
+$$P_n = \{(\frac{i}{n+1},\frac{X_i-b_n}{a_n}:i=1,...,n)\}$$
+
+Then $P_n \rightarrow P$ as $n \rightarrow \infty$, where $P$ is a Poisson process with intensity $\lambda$.
+
+
+```{r, warning=FALSE}
+pp_fit <- fevd(unlist(data_series), threshold = threshold, type = "PP")
+plot(pp_fit, type = "density", main = "Empirical POT events density vs estimated Poisson distribution")
+```
 
 # References
