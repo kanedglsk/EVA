@@ -4,13 +4,16 @@ author: "Shikun Li"
 output:
   html_document:
     number_sections: yes
-    toc: true
-    theme: "sandstone"
+    theme: sandstone
+    toc: yes
+bibliography: references.bib
 ---
-How do we predict rare events of extreme values, such as floods(high rainfall), tsunami(high sea level) and anomalous traffic, when there are very few such observations? What do 100-year floor, 50-year wave and  200-day outbreak mean? 
+How do we predict rare events of extreme values, such as floods (high riverflow), tsunami (high sea level) and DDoS attack (anomalous traffic), when there are very few such observations? What do 100-year flood, 50-year wave and  200-day outbreak mean? 
 Successful predictions of these rare events is important to prevent loss.
 
-Simplest case: $x_1, x_2, x_3, ... x_n \stackrel{i.i.d.}\sim F$. Require accurate inference on the tail of $F$.
+In this example, **extRemes** package [@extRemes] will be used.
+
+Simplest case: $X_1, X_2, X_3, ... X_n \stackrel{i.i.d.}\sim F$. Require accurate inference on the tail of $F$.
 
 
 # Block maxima
@@ -50,21 +53,24 @@ $$\begin{equation} G(z)=
 
 
 
-*Illustrating the theorm by simulation:*
+Illustrating the theorm by simulation:
 ```{r, message=FALSE}
 library(extRemes)
 ## block size
-n <- 10
+n <- 12
 original_mean <- 5
 original_sd <- 2
 
 ## Create a series of maxima
-series_length <- 1000
+series_length <- 200
 maxima <- c()
+## Simulate blocks of data
+data_series <- list()
 for (i in 1:series_length) {
-  maxima <- c(maxima, max(rnorm(n = n, mean = original_mean, sd = original_sd)))
+  data_series[[i]] <- rnorm(n = n, mean = original_mean, sd = original_sd)
 }
-plot(maxima, main = "Simulated maxima of normal variables", type = "l")
+maxima <- unlist(lapply(data_series, max))
+plot(maxima, main = "Block maxima", type = "l")
 fit <- fevd(maxima, type = "Gumbel")
 plot(fit, type = "density", main = "Empirical density vs estimated Gumbel distribution")
 ```
@@ -76,6 +82,43 @@ where $G(z_p) = 1 - p$.
 
 In extreme value terminology, $z_p$ is the return level associated with the return period $1/p$.
 
-For annual maxima of rainfall, $z_p$ is the amount of annual maximum rainfall with probability of occurrence $1-p$ in any given year, and $1/p$ is the recurrence interval in years.
+For annual maxima of rainfall, $z_p$ is the amount of annual maximum rainfall with probability of occurrence $1-p$ in any given year, and $1/p$ is the recurrence interval in years. (it can be considered as a Geometric distribution)
+
+
+```{r}
+plot(fit, type = "rl", main = "Return level")
+```
+
+ [@ethz2008]
 
 # Peaks over thresholds
+Since lots of data are thrown away, the block maxima method is inefficient. A more efficient method is called peaks over thresholds. The POT method uses observations above a given threshold, $u$. There are two ways of using POT data: one for the size of exceedances and a second for the number of events in a time period considered.
+
+## Generalized Pareto
+$X_1, X_2, X_3, ... X_n \stackrel{i.i.d.}\sim F$, and define a new variable for exceedances above $u$: $Y=X-u$ for $X>u$. We can write $Y_j = X_i - u$ such that $i$ is the index of the $j$th exceedance, $j=1,...,n_u$.
+The distribution function of Y can be defined as
+$$F(y) = Pr\{Y\leq y\} = Pr \{X-u \leq x | X > u\},~ y\geq 0$$
+
+ This distribution can be approximated by a Generalized Pareto distribution [@pickands1975statistical].
+
+[@bommier2014peaks]
+
+```{r}
+## Setting the threshold u
+threshold <- 7.5
+plot(x = rep(1:series_length, each = n), y = unlist(data_series), main = "Peak Over Thresholds",
+     sub = paste("threshold =", threshold), xlab = "series", ylab = "value")
+pot_points <- unlist(data_series) > threshold
+points(x = rep(1:series_length, each = n)[pot_points], y = unlist(data_series)[pot_points], col = "red")
+abline(h = threshold, col = "red")
+gp_fit <- fevd(unlist(data_series), threshold = threshold, type = "GP")
+plot(gp_fit, type = "density", main = "Empirical POT density vs estimated GP distribution")
+plot(gp_fit, type = "rl", main = "Return level")
+```
+
+The selection of threshold is not straightforward: threshold too low-bias because of the model asymptotics being invalid; threshold too high-variance is large due to few data points.
+
+## Point process representation
+
+
+# References
