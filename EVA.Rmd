@@ -2,13 +2,20 @@
 title: "Extreme Value Analysis"
 author: "Shikun Li"
 output:
+  pdf_document:
+    number_sections: yes
+    toc: yes
   html_document:
     number_sections: yes
     theme: paper
     toc: yes
-    toc_float: true
+    toc_float: yes
 bibliography: references.bib
 ---
+
+
+
+
 How do we predict rare events of extreme values, such as floods (high riverflow), tsunami (high sea level) and DDoS attack (anomalous traffic), when there are very few such observations? What do 100-year flood, 50-year wave and  200-day outbreak mean? 
 Successful predictions of these rare events is important to prevent loss.
 
@@ -32,24 +39,24 @@ $$G(z) \propto exp[-(1+\xi z)^{-1/\xi}]$$
 For some non-degenerate distribution, $G$ belongs to one of the following:
 
 Gumbel:
-$$\begin{equation} G(z)= exp\{-exp(-(\frac{z-b}{a}))\}
-    \end{equation}, z \in \mathbb{R}$$
+$$\begin{aligned} G(z)= exp\{-exp(-(\frac{z-b}{a}))\}
+    \end{aligned}, z \in \mathbb{R}$$
 
 Weibull:
-$$\begin{equation} G(z)=
+$$\begin{aligned} G(z)=
     \begin{cases}
       exp\{-exp(-(\frac{z-b}{a}))\} & z < b \\
       1 & z  \geq b
     \end{cases}
-    \end{equation}$$
+    \end{aligned}$$
     
 Frechet:
-$$\begin{equation} G(z)=
+$$\begin{aligned} G(z)=
     \begin{cases}
       0 & z \leq b \\
       exp\{-(\frac{z-b}{a})^{-a}\} & z > b
     \end{cases}
-    \end{equation}$$
+    \end{aligned}$$
 
 
 
@@ -96,7 +103,7 @@ plot(fit, type = "rl", main = "Return level")
 # Peaks over thresholds
 Since lots of data are thrown away, the block maxima method is inefficient. A more efficient method is called peaks over thresholds. The POT method uses observations above a given threshold, $u$. There are two ways of using POT data: one for the size of exceedances and a second for the number of events in a time period considered.
 
-## Generalized Pareto
+## Generalized Pareto distribution
 $X_1, X_2, X_3, ... X_n \stackrel{i.i.d.}\sim F$, and define a new variable for exceedances above $u$: $Y=X-u$ for $X>u$. We can write $Y_j = X_i - u$ such that $i$ is the index of the $j$th exceedance, $j=1,...,n_u$.
 The distribution function of Y can be defined as
 $$F(y) = Pr\{Y\leq y\} = Pr \{X-u \leq x | X > u\},~ y\geq 0$$
@@ -118,7 +125,7 @@ plot(gp_fit, type = "density", main = "Empirical POT exceedances density vs esti
 plot(gp_fit, type = "rl", main = "Return level")
 ```
 
-The selection of threshold is not straightforward: threshold too low-bias because of the model asymptotics being invalid; threshold too high-variance is large due to few data points.
+The selection of threshold is not straightforward: threshold too low -- bias because of the model asymptotics being invalid; threshold too high -- variance is large due to few data points.
 
 ## Point process representation
 Suppose $F$ unknown, $X_1, X_2, X_3, ... X_n \stackrel{i.i.d.}\sim F$. Form a 2-dimensional point process $\{(i,X_i);i=1,...,n\}$  and characterize the behaviour of this process in regions of the form $\textit{A}=[t1,t2]\times [u,\infty)$.

@@ -232,20 +232,20 @@ div.tocify {
 <div id="fishertippettgnedenko-theorem" class="section level2">
 <h2><span class="header-section-number">1.2</span> Fisher–Tippett–Gnedenko theorem</h2>
 <p>If there exist sequences of constants <span class="math inline">\(a_n &gt; 0\)</span> and <span class="math inline">\(b_n \in \mathbb{R}\)</span> such that, as <span class="math inline">\(n \rightarrow \infty\)</span>, <span class="math display">\[Pr\{(M_n - b_n)/a_n \leq z \} \rightarrow G(z)\]</span> then <span class="math display">\[G(z) \propto exp[-(1+\xi z)^{-1/\xi}]\]</span> For some non-degenerate distribution, <span class="math inline">\(G\)</span> belongs to one of the following:</p>
-<p>Gumbel: <span class="math display">\[\begin{equation} G(z)= exp\{-exp(-(\frac{z-b}{a}))\}
-    \end{equation}, z \in \mathbb{R}\]</span></p>
-<p>Weibull: <span class="math display">\[\begin{equation} G(z)=
+<p>Gumbel: <span class="math display">\[\begin{aligned} G(z)= exp\{-exp(-(\frac{z-b}{a}))\}
+    \end{aligned}, z \in \mathbb{R}\]</span></p>
+<p>Weibull: <span class="math display">\[\begin{aligned} G(z)=
     \begin{cases}
       exp\{-exp(-(\frac{z-b}{a}))\} &amp; z &lt; b \\
       1 &amp; z  \geq b
     \end{cases}
-    \end{equation}\]</span></p>
-<p>Frechet: <span class="math display">\[\begin{equation} G(z)=
+    \end{aligned}\]</span></p>
+<p>Frechet: <span class="math display">\[\begin{aligned} G(z)=
     \begin{cases}
       0 &amp; z \leq b \\
       exp\{-(\frac{z-b}{a})^{-a}\} &amp; z &gt; b
     \end{cases}
-    \end{equation}\]</span></p>
+    \end{aligned}\]</span></p>
 <p>Illustrating the theorm by simulation:</p>
 <pre class="r"><code>set.seed(123)
 library(extRemes)
